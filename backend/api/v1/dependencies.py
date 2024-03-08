@@ -13,9 +13,7 @@ from backend.core.db import engine
 from backend.models import User
 from backend.schemas.auth import Token, TokenPayload
 
-reusable_oauth2 = OAuth2PasswordBearer(
-    tokenUrl=f"{settings.API_V1_STR}/login/access-token"
-)
+reusable_oauth2 = OAuth2PasswordBearer(tokenUrl=f"{settings.API_V1_STR}/auth/login")
 
 
 def get_db() -> Generator:
