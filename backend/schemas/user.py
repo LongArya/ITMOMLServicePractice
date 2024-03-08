@@ -12,7 +12,7 @@ class UserBaseSchema(BaseModel):
     model_config = ConfigDict(from_attributes=True)
 
 
-class UserReadSchema(BaseModel):
+class UserReadSchema(UserBaseSchema):
     pass
 
 
