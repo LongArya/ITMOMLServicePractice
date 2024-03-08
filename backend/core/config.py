@@ -16,7 +16,7 @@ class Settings(BaseSettings):
     SECRET_KEY: str = secrets.token_urlsafe(32)
     # 60 minutes * 24 hours * 8 days = 8 days
     ACCESS_TOKEN_EXPIRE_MINUTES: int = 60 * 24 * 8
-    SERVER_HOST: AnyHttpUrl
+    # SERVER_HOST: AnyHttpUrl
     # BACKEND_CORS_ORIGINS is a JSON-formatted list of origins
     # e.g: '["http://localhost", "http://localhost:4200", "http://localhost:3000", \
     # "http://localhost:8080", "http://local.dockertoolbox.tiangolo.com"]'
@@ -31,7 +31,7 @@ class Settings(BaseSettings):
             return v
         raise ValueError(v)
 
-    PROJECT_NAME: str
+    PROJECT_NAME: str = "ITMO_ML_Service"
     SENTRY_DSN: HttpUrl | None = None
 
     @field_validator("SENTRY_DSN", mode="before")
@@ -41,23 +41,24 @@ class Settings(BaseSettings):
             return None
         return v
 
-    POSTGRES_SERVER: str
-    POSTGRES_USER: str
-    POSTGRES_PASSWORD: str
-    POSTGRES_DB: str
-    SQLALCHEMY_DATABASE_URI: PostgresDsn | None = None
+    SQLALCHEMY_SQLITE_DATABASE_URI: str = "sqlite:///database.db"
+    # POSTGRES_SERVER: str
+    # POSTGRES_USER: str
+    # POSTGRES_PASSWORD: str
+    # POSTGRES_DB: str
+    # SQLALCHEMY_DATABASE_URI: PostgresDsn | None = None
 
-    @field_validator("SQLALCHEMY_DATABASE_URI", mode="before")
-    def assemble_db_connection(cls, v: str | None, info: ValidationInfo) -> Any:
-        if isinstance(v, str):
-            return v
-        return PostgresDsn.build(
-            scheme="postgresql+psycopg",
-            username=info.data.get("POSTGRES_USER"),
-            password=info.data.get("POSTGRES_PASSWORD"),
-            host=info.data.get("POSTGRES_SERVER"),
-            path=f"{info.data.get('POSTGRES_DB') or ''}",
-        )
+    # @field_validator("SQLALCHEMY_DATABASE_URI", mode="before")
+    # def assemble_db_connection(cls, v: str | None, info: ValidationInfo) -> Any:
+    #     if isinstance(v, str):
+    #         return v
+    #     return PostgresDsn.build(
+    #         scheme="postgresql+psycopg",
+    #         username=info.data.get("POSTGRES_USER"),
+    #         password=info.data.get("POSTGRES_PASSWORD"),
+    #         host=info.data.get("POSTGRES_SERVER"),
+    #         path=f"{info.data.get('POSTGRES_DB') or ''}",
+    #     )
 
     SMTP_TLS: bool = True
     SMTP_PORT: int | None = None
@@ -89,8 +90,8 @@ class Settings(BaseSettings):
     # TODO: update type to EmailStr when sqlmodel supports it
     EMAIL_TEST_USER: str = "test@example.com"
     # TODO: update type to EmailStr when sqlmodel supports it
-    FIRST_SUPERUSER: str
-    FIRST_SUPERUSER_PASSWORD: str
+    FIRST_SUPERUSER: str = "admin"
+    FIRST_SUPERUSER_PASSWORD: str = "admin"
     USERS_OPEN_REGISTRATION: bool = False
     model_config = SettingsConfigDict(case_sensitive=True)
 
