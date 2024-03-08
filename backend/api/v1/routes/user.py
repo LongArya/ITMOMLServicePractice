@@ -13,15 +13,11 @@ from backend.api.v1.dependencies import (
 from backend.core.config import settings
 
 from backend.core.security import get_password_hash, verify_password
-from backend.schemas.user import (
-    UserCreateSchema,
-    UserUpdateSchema,
-)
+from backend.schemas.user import UserCreateSchema, UserUpdateSchema, UserReadSchema
 from backend.models import User
 from backend.schemas.auth import TokenPayload
 from backend.schemas.user import UserReadSchema
 
-# from app.utils import send_new_account_email
 
 router = APIRouter()
 
@@ -43,30 +39,6 @@ def read_users(session: SessionDep, skip: int = 0, limit: int = 100) -> Any:
     return List[User]
 
 
-# @router.post(
-#     "/",
-#     dependencies=[Depends(get_current_active_superuser)],
-#     response_model=UserReadSchema,
-# )
-# def create_user(*, session: SessionDep, user_in: UserCreateSchema) -> Any:
-#     """
-#     Create new user.
-#     """
-#     user = crud.get_user_by_email(session=session, email=user_in.email)
-#     if user:
-#         raise HTTPException(
-#             status_code=400,
-#             detail="The user with this username already exists in the system.",
-#         )
-
-#     user = crud.create_user(session=session, user_create=user_in)
-#     if settings.EMAILS_ENABLED and user_in.email:
-#         send_new_account_email(
-#             email_to=user_in.email, username=user_in.email, password=user_in.password
-#         )
-#     return user
-
-
 @router.get("/me", response_model=UserReadSchema)
 def read_user_me(session: SessionDep, current_user: CurrentUserDep) -> Any:
     """
@@ -81,14 +53,13 @@ def read_user_me(session: SessionDep, current_user: CurrentUserDep) -> Any:
     response_model=UserReadSchema,
 )
 def read_user_by_id(
-    user_id: int, session: SessionDep, current_user: CurrentUserDep
+    user_id: int,
+    session: SessionDep,
 ) -> Any:
     """
     Get a specific user by id.
     """
-    user = session.get(UserSchema, user_id)
-    if user == current_user:
-        return user
+    user = session.get(User, user_id)
     return user
 
 
