@@ -47,7 +47,7 @@ def register(session: SessionDep, user_create_data: UserCreateSchema) -> Any:
     if user:
         raise HTTPException(
             status_code=400,
-            detail="The user with this username already exists in the system",
+            detail="The user with this email already exists in the system",
         )
     created_user = create_user(session, user_create_data)
     return created_user
