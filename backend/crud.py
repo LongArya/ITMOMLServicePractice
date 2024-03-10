@@ -5,11 +5,16 @@ from sqlmodel import Session, select
 from backend.core.security import get_password_hash, verify_password
 from backend.schemas.user import UserCreateSchema
 from backend.models import User
+from backend.core.config import settings
 
 
 def create_user(session: Session, user_create: UserCreateSchema) -> User:
     db_obj = User.model_validate(
-        user_create, update={"hashed_password": get_password_hash(user_create.password)}
+        user_create,
+        update={
+            "hashed_password": get_password_hash(user_create.password),
+            "balance": settings.USER_START_BALANCE,
+        },
     )
     session.add(db_obj)
     session.commit()

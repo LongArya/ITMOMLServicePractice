@@ -13,7 +13,7 @@ class UserBaseSchema(BaseModel):
 
 
 class UserReadSchema(UserBaseSchema):
-    pass
+    balance: int
 
 
 # Properties to receive via API on creation

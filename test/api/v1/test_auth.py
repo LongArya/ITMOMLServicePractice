@@ -32,6 +32,7 @@ def test_register(client_fixture: TestClient) -> None:
     assert data["email"] == TEST_EMAIL
     assert data["is_active"] is True
     assert data["is_superuser"] is False
+    assert data["balance"] == settings.USER_START_BALANCE
 
 
 def test_register_with_existing_email(
@@ -43,6 +44,7 @@ def test_register_with_existing_email(
         hashed_password=TEST_PWD_HASH,
         is_active=True,
         is_superuser=False,
+        balance=settings.ACCESS_TOKEN_EXPIRE_MINUTES,
     )
     session_fixture.add(db_obj)
     session_fixture.commit()
@@ -67,6 +69,7 @@ def test_login_with_correct_credentials(
         name="test",
         email=TEST_EMAIL,
         hashed_password=TEST_PWD_HASH,
+        balance=settings.ACCESS_TOKEN_EXPIRE_MINUTES,
     )
     session_fixture.add(db_obj)
     session_fixture.commit()
@@ -84,6 +87,7 @@ def test_failed_login_with_incorrect_credentials(
         name="test",
         email=TEST_EMAIL,
         hashed_password=TEST_PWD_HASH,
+        balance=settings.USER_START_BALANCE,
     )
     session_fixture.add(db_obj)
     session_fixture.commit()
@@ -98,7 +102,11 @@ def test_failed_login_with_correct_credentials_for_inactive_user(
     client_fixture: TestClient, session_fixture: Session
 ) -> None:
     db_obj = User(
-        name="test", email=TEST_EMAIL, hashed_password=TEST_PWD_HASH, is_active=False
+        name="test",
+        email=TEST_EMAIL,
+        hashed_password=TEST_PWD_HASH,
+        is_active=False,
+        balance=settings.USER_START_BALANCE,
     )
     session_fixture.add(db_obj)
     session_fixture.commit()

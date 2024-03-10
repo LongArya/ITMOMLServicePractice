@@ -24,6 +24,7 @@ class User(SQLModel, table=True):
     hashed_password: str
     is_active: bool = True
     is_superuser: bool = False
+    balance: int
 
     predictions: List["Prediction"] = Relationship(back_populates="user_initiator")
 
