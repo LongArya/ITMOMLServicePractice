@@ -3,6 +3,7 @@ from fastapi.routing import APIRoute
 
 from backend.api.v1.main import api_router
 from backend.core.config import settings
+from backend.core.db import init_db
 
 
 def custom_generate_unique_id(route: APIRoute):
@@ -15,4 +16,6 @@ app = FastAPI(
     generate_unique_id_function=custom_generate_unique_id,
 )
 
+
+init_db()
 app.include_router(api_router, prefix=settings.API_V1_STR)
