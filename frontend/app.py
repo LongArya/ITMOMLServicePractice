@@ -40,10 +40,12 @@ def get_auth_navbar_items() -> List[dbc.NavItem]:
 def get_authorized_navbar_dropdown_menu() -> dbc.DropdownMenu:
     models_page = dash.page_registry["pages.models"]
     profile_page = dash.page_registry["pages.user_profile"]
+    history_page = dash.page_registry["pages.history"]
     dropdown = dbc.DropdownMenu(
         children=[
             dbc.DropdownMenuItem("Profile", href=profile_page["relative_path"]),
             dbc.DropdownMenuItem("Models", href=models_page["relative_path"]),
+            dbc.DropdownMenuItem("History", href=history_page["relative_path"]),
         ],
         nav=True,
         in_navbar=True,
