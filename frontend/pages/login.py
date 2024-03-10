@@ -6,7 +6,7 @@ from dash.exceptions import PreventUpdate
 import dash_bootstrap_components as dbc
 from typing import List, Dict, Tuple
 from pprint import pprint
-from frontend.api_utils import login_via_api
+from frontend.api_utils import login_via_api, get_current_user_data_via_api
 
 
 dash.register_page(__name__)
@@ -37,10 +37,10 @@ def login_user(
         return session_data, login_successful, login_missing_data, login_error
     response: Response = login_via_api(email=login_email, password=login_password)
     if response.status_code == HTTPStatus.OK:
-        print("response.json()")
-        print(response.json())
         token = response.json()["access_token"]
         session_data["token"] = token
+        cur_user_response = get_current_user_data_via_api(access_token=token)
+        session_data["current_user"] = cur_user_response.json()
         login_successful = True
         return session_data, login_successful, login_missing_data, login_error
 
