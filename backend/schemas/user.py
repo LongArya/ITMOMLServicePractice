@@ -14,6 +14,7 @@ class UserBaseSchema(BaseModel):
 
 class UserReadSchema(UserBaseSchema):
     balance: int
+    id: int
 
 
 # Properties to receive via API on creation
