@@ -6,6 +6,7 @@ from backend.schemas.user import UserCreateSchema
 from backend.schemas.prediction import PredictionCreateSchema
 from backend.models import User, Model, Prediction
 from backend.core.config import settings
+from typing import List
 
 RQ_JOB_FINISHED_STATUS = "finished"
 RQ_JOB_FAILED_STATUS = "failed"
@@ -23,6 +24,12 @@ def create_user(session: Session, user_create: UserCreateSchema) -> User:
     session.commit()
     session.refresh(db_obj)
     return db_obj
+
+
+def get_user_predictions(session: Session, user_id: int) -> List[Prediction]:
+    statement = select(Prediction).where(Prediction.user_id == user_id)
+    objects = session.exec(statement)
+    return objects
 
 
 def make_payment_for_user(session: Session, user_id: int, payment: int) -> None:
