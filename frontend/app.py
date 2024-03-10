@@ -13,10 +13,10 @@ app = Dash(__name__, use_pages=True, external_stylesheets=[dbc.themes.LUX])
 
 @callback(Output("app-navbar", "children"), Input("session", "data"))
 def set_navbar(data):
-    items = auth_only_navbar()
+    items = non_authorized_user_navbar_items()
     print(f"set navbar based on {data}")
     if data.get("token", "") != "":
-        items = all_items_navbar()
+        items = authorized_user_navbar_items()
     return items
 
 
@@ -39,17 +39,17 @@ def get_authorized_navbar_dropdown_menu() -> dbc.DropdownMenu:
         ],
         nav=True,
         in_navbar=True,
-        label="More",
+        label="user_email",
     )
     return dropdown
 
 
-def auth_only_navbar() -> List:
+def non_authorized_user_navbar_items() -> List:
     auth_navbar_items = get_auth_navbar_items()
     return auth_navbar_items
 
 
-def all_items_navbar() -> List:
+def authorized_user_navbar_items() -> List:
     all_navbar_items = get_auth_navbar_items()
     drodown_items = get_authorized_navbar_dropdown_menu()
     all_navbar_items.append(drodown_items)
@@ -57,14 +57,20 @@ def all_items_navbar() -> List:
 
 
 def create_navbar():
-    navbar_items = auth_only_navbar()
+    navbar_items = non_authorized_user_navbar_items()
     navbar = dbc.NavbarSimple(
         id="app-navbar",
         children=navbar_items,
         brand="ITMO ML Service project",
-        brand_href="#",
+        brand_href="/",
         color="primary",
         dark=True,
+        brand_style={
+            "margin-left": "2%",
+            "font-size": "30px",
+            "font-weight": "bolder",
+        },
+        fluid=True,
     )
     return navbar
 
@@ -73,7 +79,7 @@ def create_layout():
     navbar = create_navbar()
     app.layout = html.Div(
         [
-            html.Div(navbar),
+            navbar,
             dash.page_container,
             dcc.Store(id="session", storage_type="memory"),
         ]
