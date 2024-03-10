@@ -1,29 +1,65 @@
 import dash
-from dash import Dash, html, dcc, callback, Input, Output
+from http import HTTPStatus
+from requests import Response
+from dash import Dash, html, dcc, callback, Input, Output, State
+from dash.exceptions import PreventUpdate
 import dash_bootstrap_components as dbc
+from frontend.api_utils import register_user_via_api
+from typing import Dict, List, Tuple
 
 dash.register_page(__name__)
 
 
 @callback(
-    [Output("hidden-signup-span", "children"), Input("signup-button", "n_clicks")]
+    Output("register-successful", "is_open"),
+    Output("register_missing-data", "is_open"),
+    Output("register_error", "is_open"),
+    Input("signup-button", "n_clicks"),
+    # form data
+    State("register_form_username", "value"),
+    State("register_form_email", "value"),
+    State("register_form_pwd", "value"),
 )
-def on_signup_button_click(n):
-    print(f"\nCLICKED SIGN UP BUTTON {n}")
-    return [""]
+def register_user(
+    n_clicks: int, user_name: str, user_email: str, user_password: str
+) -> Tuple[bool, bool, bool]:
+    if n_clicks is None:
+        raise PreventUpdate
+    register_successful = False
+    register_missing_data = False
+    register_error = False
+    if n_clicks == 0:
+        return register_successful, register_missing_data, register_error
+    if None in [user_email, user_password]:
+        register_missing_data = True
+        return register_successful, register_missing_data, register_error
+    print(user_name, user_email, user_password)
+    print(user_name, user_email, user_password)
+    response: Response = register_user_via_api(
+        username=user_name, email=user_email, password=user_password
+    )
+    if response.status_code == HTTPStatus.OK:
+        register_successful = True
+        return register_successful, register_missing_data, register_error
+    register_error = True
+    return register_successful, register_missing_data, register_error
 
 
 def get_signup_form():
     email_input = html.Div(
         [
-            dbc.Input(type="email", id="example-email", placeholder="Enter email"),
+            dbc.Input(
+                type="email", id="register_form_email", placeholder="Enter email"
+            ),
         ],
         className="mb-3",
     )
 
     username_input = html.Div(
         [
-            dbc.Input(type="text", id="username", placeholder="Enter username"),
+            dbc.Input(
+                type="text", id="register_form_username", placeholder="Enter username"
+            ),
         ],
         className="mb-3",
     )
@@ -32,7 +68,7 @@ def get_signup_form():
         [
             dbc.Input(
                 type="password",
-                id="example-password",
+                id="register_form_pwd",
                 placeholder="Enter password",
             ),
         ],
@@ -52,6 +88,27 @@ def layout():
     sign_up_form = get_signup_form()
     layout = html.Div(
         [
+            dbc.Alert(
+                "Successfully registered",
+                color="success",
+                id="login-successful",
+                is_open=False,
+                duration=1000,
+            ),
+            dbc.Alert(
+                "Please fill the sign up form",
+                color="warning",
+                id="login_missing-data",
+                is_open=False,
+                duration=1000,
+            ),
+            dbc.Alert(
+                "Could not register",
+                color="danger",
+                id="login_error",
+                is_open=False,
+                duration=1000,
+            ),
             html.H5("Sign Up", style={"margin-top": "5%", "margin-left": "5%"}),
             html.Div(children=[sign_up_form]),
             html.Span(id="hidden-signup-span", style={"display": "none"}),
