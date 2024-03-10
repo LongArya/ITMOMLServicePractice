@@ -25,9 +25,9 @@ def read_pickle(path: FilePath) -> Any:
 
 
 ModelRegistry: Dict[str, MlModel] = {
-    "LogReg": read_pickle("ML_research/models/log_reg.pkl"),
-    "Dtree": read_pickle("ML_research/models/dtree.pkl"),
-    "RandomForest": read_pickle("ML_research/models/random_forest.pkl"),
+    "logreg": read_pickle("ML_research/models/log_reg.pkl"),
+    "dtree": read_pickle("ML_research/models/dtree.pkl"),
+    "random-forest": read_pickle("ML_research/models/random_forest.pkl"),
 }
 
 

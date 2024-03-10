@@ -8,9 +8,9 @@ engine = create_engine(str(settings.SQLALCHEMY_SQLITE_DATABASE_URI))
 
 
 def init_models():
-    log_reg_model = Model(name="LogReg", cost=100)
-    dtree = Model(name="Dtree", cost=200)
-    random_forest = Model(name="RandomForest", cost=300)
+    log_reg_model = Model(name="logreg", cost=100)
+    dtree = Model(name="dtree", cost=200)
+    random_forest = Model(name="random-forest", cost=300)
 
     with Session(engine) as session:
         for model in [log_reg_model, dtree, random_forest]:
