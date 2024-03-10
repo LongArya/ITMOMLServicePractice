@@ -6,16 +6,21 @@ import plotly.express as px
 from pprint import pprint
 from typing import List
 
+
 load_figure_template("LUX")
 
-app = Dash(__name__, use_pages=True, external_stylesheets=[dbc.themes.LUX])
+app = Dash(
+    __name__,
+    use_pages=True,
+    external_stylesheets=[dbc.themes.LUX],
+)
 
 
 @callback(Output("app-navbar", "children"), Input("session", "data"))
 def set_navbar(data):
     items = non_authorized_user_navbar_items()
     print(f"set navbar based on {data}")
-    if data.get("token", "") != "":
+    if data[0].get("token", "") != "":
         items = authorized_user_navbar_items()
     return items
 
@@ -81,7 +86,7 @@ def create_layout():
         [
             navbar,
             dash.page_container,
-            dcc.Store(id="session", storage_type="memory"),
+            dcc.Store(id="session", storage_type="memory", data=[{"token": None}]),
         ]
     )
 
