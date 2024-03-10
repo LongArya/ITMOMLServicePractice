@@ -31,6 +31,12 @@ GENES_COLUMNS = [
     "FAT4",
     "PDGFRA",
 ]
+TRAIN_COLUMNS = [
+    "Gender",
+    "Age_at_diagnosis",
+    "Primary_Diagnosis",
+    "Race",
+] + GENES_COLUMNS
 
 
 # BASIC PREPROCESSING
@@ -113,3 +119,9 @@ def encode_data(
     encoded_data = encoded_data.drop(columns=CATEGORICAL_COLUMN)
     encoded_data = pd.concat((encoded_data, encoded_categorical_data), axis=1)
     return encoded_data
+
+
+def get_single_row_table() -> pd.DataFrame:
+    data = ["Male", 100, "Oligodendroglioma, NOS", "white"] + ["MUTATED"] * 20
+    single_row_table = pd.DataFrame([data], columns=TRAIN_COLUMNS)
+    return single_row_table
