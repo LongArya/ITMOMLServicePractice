@@ -1,10 +1,11 @@
 import dash
+import json
 from dash import Dash, dcc, html, Input, Output, callback, State
 from dash_bootstrap_templates import load_figure_template
 import dash_bootstrap_components as dbc
 import plotly.express as px
 from pprint import pprint
-from typing import List
+from typing import List, Dict
 
 
 load_figure_template("LUX")
@@ -17,11 +18,12 @@ app = Dash(
 
 
 @callback(Output("app-navbar", "children"), Input("session", "data"))
-def set_navbar(data):
+def set_navbar(session_data: Dict) -> Dict:
+    print(f"set navbar based on {session_data}")
     items = non_authorized_user_navbar_items()
-    print(f"set navbar based on {data}")
-    if data[0].get("token", "") != "":
-        items = authorized_user_navbar_items()
+    if session_data["token"] is not None:
+        balance = session_data["current_user"]["balance"]
+        items = authorized_user_navbar_items(balance)
     return items
 
 
@@ -36,15 +38,16 @@ def get_auth_navbar_items() -> List[dbc.NavItem]:
 
 
 def get_authorized_navbar_dropdown_menu() -> dbc.DropdownMenu:
+    models_page = dash.page_registry["pages.models"]
+    profile_page = dash.page_registry["pages.user_profile"]
     dropdown = dbc.DropdownMenu(
         children=[
-            dbc.DropdownMenuItem("Home", header=True),
-            dbc.DropdownMenuItem("masyunya", href="#"),
-            dbc.DropdownMenuItem("sima", href="#"),
+            dbc.DropdownMenuItem("Profile", href=profile_page["relative_path"]),
+            dbc.DropdownMenuItem("Models", href=models_page["relative_path"]),
         ],
         nav=True,
         in_navbar=True,
-        label="user_email",
+        label="MORE",
     )
     return dropdown
 
@@ -54,10 +57,12 @@ def non_authorized_user_navbar_items() -> List:
     return auth_navbar_items
 
 
-def authorized_user_navbar_items() -> List:
+def authorized_user_navbar_items(user_balance: int) -> List:
     all_navbar_items = get_auth_navbar_items()
     drodown_items = get_authorized_navbar_dropdown_menu()
     all_navbar_items.append(drodown_items)
+    balance_item = dbc.NavItem(dbc.NavLink(f"{user_balance} P", href="#"))
+    all_navbar_items.append(balance_item)
     return all_navbar_items
 
 
@@ -86,7 +91,7 @@ def create_layout():
         [
             navbar,
             dash.page_container,
-            dcc.Store(id="session", storage_type="memory", data=[{"token": None}]),
+            dcc.Store(id="session", storage_type="memory", data={"token": None}),
         ]
     )
 
