@@ -19,3 +19,4 @@ sudo docker compose up --build
 
 navigate to http://localhost:10000/
 
+API docs are available at http://localhost:8080/docs
