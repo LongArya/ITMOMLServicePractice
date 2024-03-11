@@ -1,0 +1,46 @@
+version: '3.7'
+
+services:
+    project_redis:
+        container_name: project_redis
+        hostname: redis
+        image: redis:latest
+        command: --port 6379
+        ports:
+            - "6379:6379"
+        expose:
+            - "6379"
+        restart: always
+
+    api:
+        container_name: api
+        build:
+            context: ./
+            dockerfile: ./Dockerfile
+        ports:
+        - "8080:8080"
+        working_dir: /home/MLServiceProj
+        volumes:
+            - ./:/home/MLServiceProj
+        links:
+            - project_redis
+        command: uvicorn backend.main:app --host 0.0.0.0 --port 8080 --reload
+
+    worker:
+        container_name: worker
+        build:
+            context: ./
+            dockerfile: ./Dockerfile   
+        links:
+            - project_redis         
+        command: rq worker --url redis://project_redis:6379
+    
+    dash_frontend:
+        container_name: dash_frontend
+        build:
+            context: ./
+            dockerfile: ./Dockerfile            
+        ports:
+            - "10000:8080"
+        working_dir: /home/MLServiceProj
+        command: python3.10 -m frontend.app
