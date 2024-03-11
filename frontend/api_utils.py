@@ -5,7 +5,7 @@ from typing import Dict
 from requests import Response
 from backend.core.config import settings
 
-BACKEND_API = "http://127.0.0.1:8000"
+BACKEND_API = "http://api:8080"
 REGISTER_ENDPOINT = f"{BACKEND_API}{settings.API_V1_STR}/auth/register"
 LOGIN_ENDPOINT = f"{BACKEND_API}{settings.API_V1_STR}/auth/login"
 CURRENT_USER_ENDPOINT = f"{BACKEND_API}{settings.API_V1_STR}/users/me"
